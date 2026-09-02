@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Importance of Smell in Nature</title>
+<style>
+  :root{
+    --leaf:#7ED957;
+    --leaf-dark:#069A2E;
+    --leaf-deep:#046b21;
+    --cream:#FFFCF4;
+    --bark:#3D2B1F;
+    --coral:#FF9E7D;
+    --sun:#FFD873;
+    --sky:#EAF9E7;
+  }
+
+  *{box-sizing:border-box;}
+
+  html,body{
+    margin:0; padding:0; height:100%;
+    font-family:-apple-system, "Segoe UI Rounded", "Quicksand", Verdana, sans-serif;
+    background:var(--leaf-dark);
+    overflow:hidden;
+    color:var(--bark);
+  }
+
+  #deck{
+    position:relative;
+    width:100vw; height:100vh;
+  }
+
+  .slide{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    visibility:hidden;
+    transform:translateY(24px);
+    transition:opacity .55s ease, transform .55s ease, visibility .55s;
+    padding:6vh 6vw;
+  }
+  .slide.active{
+    opacity:1;
+    visibility:visible;
+    transform:translateY(0);
+  }
+
+  .slide-inner{
+    max-width:1000px;
+    width:100%;
+    position:relative;
+    z-index:3;
+  }
+
+  /* ---------- Background decoration ---------- */
+  .bg-blob{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(0px);
+    z-index:0;
+    pointer-events:none;
+  }
+
+  .field{
+    position:absolute; inset:0; overflow:hidden; z-index:1;
+  }
+  .field svg{position:absolute; bottom:0; left:0; width:100%;}
+
+  .floaty{
+    position:absolute;
+    z-index:1;
+    pointer-events:none;
+    animation:drift 9s ease-in-out infinite;
+    opacity:.9;
+  }
+  @keyframes drift{
+    0%,100%{transform:translateY(0) rotate(0deg);}
+    50%{transform:translateY(-18px) rotate(6deg);}
+  }
+
+  /* ---------- Slide 1 : Title ---------- */
+  #slide-1{background:linear-gradient(180deg,var(--leaf) 0%, var(--leaf) 55%, var(--sky) 55%, var(--sky) 100%);}
+  .title-wrap{text-align:center;}
+  .eyebrow-flower{font-size:3.4rem; display:block; margin-bottom:.2rem;}
+  .title-main{
+    font-size:clamp(2.4rem, 6vw, 4.6rem);
+    line-height:1.05;
+    margin:0;
+    color:var(--bark);
+    font-weight:800;
+    letter-spacing:-1px;
+  }
+  .title-sub{
+    font-size:clamp(1.3rem, 3vw, 2rem);
+    color:var(--leaf-deep);
+    font-weight:700;
+    margin-top:.6rem;
+  }
+  .title-tag{
+    margin-top:1.4rem;
+    font-size:1.05rem;
+    color:#2c4b1f;
+    background:rgba(255,255,255,.55);
+    display:inline-block;
+    padding:.5rem 1.1rem;
+    border-radius:999px;
+  }
+
+  /* ---------- Slide 2 : How smell works ---------- */
+  #slide-2{background:var(--cream);}
+  .two-col{
+    display:flex;
+    align-items:center;
+    gap:3rem;
+    flex-wrap:wrap;
+  }
+  .two-col .text-side{flex:1 1 340px;}
+  .two-col .visual-side{flex:1 1 300px; display:flex; justify-content:center;}
+  h2.headline{
+    font-size:clamp(1.8rem,4vw,2.6rem);
+    font-weight:800;
+    color:var(--leaf-deep);
+    margin:0 0 1rem 0;
+    line-height:1.15;
+  }
+  .body-copy{font-size:1.08rem; line-height:1.65; color:#3a3226; max-width:46ch;}
+  .steps{margin-top:1.4rem; display:flex; flex-direction:column; gap:.65rem;}
+  .step{
+    display:flex; align-items:center; gap:.7rem;
+    background:var(--sky);
+    border-radius:14px;
+    padding:.6rem .9rem;
+    cursor:pointer;
+    border:2px solid transparent;
+    transition:border-color .2s, transform .2s;
+    font-size:.98rem;
+  }
+  .step:hover{border-color:var(--leaf); transform:translateX(4px);}
+  .step .num{
+    width:28px; height:28px; border-radius:50%;
+    background:var(--leaf-dark); color:white;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:.85rem; flex-shrink:0;
+  }
+  .step-detail{
+    display:none;
+    font-size:.9rem;
+    color:#555;
+    margin-top:.3rem;
+    padding-left:38px;
+  }
+  .step.open .step-detail{display:block;}
+  .step.open{background:#DFF6DA;}
+
+  /* nose/brain visual */
+  .nose-scene{width:280px; height:280px; position:relative;}
+
+  /* ---------- Slide 3: interactive smell comparison ---------- */
+  #slide-3{background:linear-gradient(135deg, var(--sky) 0%, #fff 100%);}
+  .compare-wrap{text-align:center; width:100%;}
+  .compare-cards{
+    display:flex;
+    gap:2rem;
+    justify-content:center;
+    margin-top:2.2rem;
+    flex-wrap:wrap;
+  }
+  .smell-card{
+    width:260px;
+    background:white;
+    border-radius:22px;
+    padding:1.6rem 1.2rem 1.4rem;
+    box-shadow:0 10px 24px rgba(6,154,46,.12);
+    cursor:pointer;
+    user-select:none;
+    position:relative;
+    transition:transform .25s ease;
+    border:3px solid transparent;
+  }
+  .smell-card:hover{transform:translateY(-6px);}
+  .smell-card.rose{border-color:#ffd0e0;}
+  .smell-card.trash{border-color:#cfd8c9;}
+  .smell-card .icon{font-size:3.6rem; display:block; margin-bottom:.4rem;}
+  .smell-card h3{margin:.2rem 0 .3rem; font-size:1.3rem; color:var(--bark);}
+  .smell-card p.hint{font-size:.85rem; color:#888; margin:0;}
+  .reaction{
+    margin-top:.7rem;
+    font-weight:700;
+    font-size:1rem;
+    min-height:1.4rem;
+  }
+  .reaction.fragrant{color:#c2367a;}
+  .reaction.eugh{color:#5c6b3f;}
+
+  .particle{
+    position:absolute;
+    border-radius:50%;
+    pointer-events:none;
+    opacity:0;
+  }
+
+  /* ---------- Slide 4: closing tip ---------- */
+  #slide-4{background:var(--leaf-dark); color:white;}
+  .tip-box{
+    text-align:center;
+    max-width:720px;
+    margin:0 auto;
+  }
+  .tip-icon{font-size:3.6rem; margin-bottom:.6rem; display:block;}
+  .tip-box h2{
+    font-size:clamp(1.6rem,3.6vw,2.3rem);
+    font-weight:800;
+    margin-bottom:1rem;
+  }
+  .tip-box p{font-size:1.15rem; line-height:1.7; color:#eafce6;}
+  .tip-buttons{
+    display:flex; gap:1rem; justify-content:center; margin-top:1.8rem; flex-wrap:wrap;
+  }
+  .tip-pill{
+    background:white; color:var(--leaf-deep);
+    font-weight:700; padding:.8rem 1.3rem;
+    border-radius:999px; font-size:.95rem;
+    cursor:pointer; border:none;
+    transition:transform .2s, background .2s;
+  }
+  .tip-pill:hover{transform:scale(1.05); background:var(--sun);}
+  .tip-reveal{
+    margin-top:1.3rem; font-size:1rem; color:#fff;
+    background:rgba(255,255,255,.12);
+    border-radius:14px; padding:1rem 1.3rem;
+    display:none;
+    line-height:1.6;
+    text-align:left;
+  }
+  .tip-reveal.show{display:block;}
+
+  /* ---------- nav controls ---------- */
+  .nav-dots{
+    position:fixed;
+    bottom:22px; left:50%; transform:translateX(-50%);
+    display:flex; gap:10px; z-index:10;
+  }
+  .dot{
+    width:11px; height:11px; border-radius:50%;
+    background:rgba(255,255,255,.5);
+    cursor:pointer;
+    border:2px solid rgba(255,255,255,.8);
+    transition:background .2s, transform .2s;
+  }
+  .dot.active{background:white; transform:scale(1.25);}
+
+  .arrow-btn{
+    position:fixed;
+    top:50%; transform:translateY(-50%);
+    background:rgba(255,255,255,.75);
+    border:none;
+    width:46px; height:46px;
+    border-radius:50%;
+    font-size:1.3rem;
+    cursor:pointer;
+    z-index:10;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--leaf-deep);
+    box-shadow:0 4px 10px rgba(0,0,0,.15);
+    transition:background .2s, transform .2s;
+  }
+  .arrow-btn:hover{background:white; transform:translateY(-50%) scale(1.08);}
+  #prevBtn{left:20px;}
+  #nextBtn{right:20px;}
+
+  .slide-counter{
+    position:fixed; top:20px; right:26px;
+    font-size:.85rem; color:rgba(255,255,255,.85);
+    background:rgba(0,0,0,.18);
+    padding:.35rem .7rem; border-radius:999px;
+    z-index:10;
+    letter-spacing:.5px;
+  }
+
+  @media (max-width:680px){
+    .arrow-btn{width:38px;height:38px;font-size:1.05rem;}
+    .two-col{gap:1.4rem;}
+    .nose-scene{width:200px;height:200px;}
+  }
+</style>
+</head>
+<body>
+
+<div id="deck">
+
+  <!-- SLIDE 1 -->
+  <section class="slide active" id="slide-1">
+    <div class="field" aria-hidden="true">
+      <svg viewBox="0 0 1200 220" preserveAspectRatio="none"><path fill="#069A2E" d="M0,120 C200,60 400,180 600,110 C800,50 1000,150 1200,90 L1200,220 L0,220 Z"/></svg>
+    </div>
+    <span class="floaty" style="top:12%; left:10%; font-size:2.6rem;">🌿</span>
+    <span class="floaty" style="top:18%; right:12%; font-size:2.2rem; animation-delay:1.2s;">🍃</span>
+    <span class="floaty" style="bottom:22%; left:16%; font-size:2rem; animation-delay:2.1s;">🌼</span>
+    <span class="floaty" style="bottom:16%; right:18%; font-size:2.4rem; animation-delay:.6s;">🌸</span>
+    <div class="slide-inner title-wrap">
+      <span class="eyebrow-flower">🌷</span>
+      <h1 class="title-main">The Important Part<br>of Nature...</h1>
+      <div class="title-sub">Smell</div>
+      <div class="title-tag">tap the arrow to begin sniffing around →</div>
+    </div>
+  </section>
+
+  <!-- SLIDE 2 -->
+  <section class="slide" id="slide-2">
+    <div class="slide-inner two-col">
+      <div class="text-side">
+        <h2 class="headline">Smell feels immersive,<br>but do you know how?</h2>
+        <p class="body-copy">Every scent is really tiny invisible molecules floating through the air. Your nose catches them — and your brain does the rest. Tap each step:</p>
+        <div class="steps">
+          <div class="step" data-step="1">
+            <div class="num">1</div>
+            <div>
+              <div>Scent molecules drift into your nose</div>
+              <div class="step-detail">Flowers, food, even rain release molecules that travel through the air until they reach your nostrils.</div>
+            </div>
+          </div>
+          <div class="step" data-step="2">
+            <div class="num">2</div>
+            <div>
+              <div>Smell receptors catch them</div>
+              <div class="step-detail">Deep inside your nose, tiny receptors are shaped to match different scent molecules — like little locks and keys.</div>
+            </div>
+          </div>
+          <div class="step" data-step="3">
+            <div class="num">3</div>
+            <div>
+              <div>A signal zooms to your brain</div>
+              <div class="step-detail">Your olfactory nerve sends the message straight to the brain's emotion and memory centers — faster than any other sense!</div>
+            </div>
+          </div>
+          <div class="step" data-step="4">
+            <div class="num">4</div>
+            <div>
+              <div>You react — before you even think</div>
+              <div class="step-detail">That's why a smell can bring back a memory or a feeling almost instantly, before you've even named it.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="visual-side">
+        <svg class="nose-scene" viewBox="0 0 280 280">
+          <circle cx="140" cy="140" r="130" fill="#DFF6DA"/>
+          <!-- brain -->
+          <g transform="translate(70,40)">
+            <path d="M70 10 C40 10 15 30 15 60 C5 65 0 80 10 92 C5 105 15 120 30 120 C35 132 55 140 70 135 C85 140 105 132 110 120 C125 120 135 105 130 92 C140 80 135 65 125 60 C125 30 100 10 70 10 Z" fill="#FFD3E0" stroke="#F2A8C2" stroke-width="3"/>
+            <path d="M30 45 Q40 35 50 45" stroke="#F2A8C2" stroke-width="3" fill="none"/>
+            <path d="M55 40 Q65 28 78 40" stroke="#F2A8C2" stroke-width="3" fill="none"/>
+            <path d="M85 45 Q95 35 105 48" stroke="#F2A8C2" stroke-width="3" fill="none"/>
+            <path d="M25 70 Q40 60 52 72" stroke="#F2A8C2" stroke-width="3" fill="none"/>
+            <path d="M60 68 Q75 58 90 70" stroke="#F2A8C2" stroke-width="3" fill="none"/>
+            <path d="M95 72 Q108 65 118 78" stroke="#F2A8C2" stroke-width="3" fill="none"/>
+          </g>
+          <!-- scent particles floating up -->
+          <circle class="p1" cx="70" cy="230" r="6" fill="#7ED957" opacity="0.8"/>
+          <circle class="p2" cx="100" cy="245" r="4" fill="#FFD873" opacity="0.8"/>
+          <circle class="p3" cx="130" cy="235" r="5" fill="#FF9E7D" opacity="0.8"/>
+          <animateTransform xlink:href=".p1" attributeName="transform" type="translate" values="0 0; 10 -140" dur="3s" repeatCount="indefinite"/>
+          <animate xlink:href=".p1" attributeName="opacity" values="0.9;0" dur="3s" repeatCount="indefinite"/>
+          <animateTransform xlink:href=".p2" attributeName="transform" type="translate" values="0 0; -8 -150" dur="3.6s" begin="0.5s" repeatCount="indefinite"/>
+          <animate xlink:href=".p2" attributeName="opacity" values="0.9;0" dur="3.6s" begin="0.5s" repeatCount="indefinite"/>
+          <animateTransform xlink:href=".p3" attributeName="transform" type="translate" values="0 0; 4 -145" dur="3.2s" begin="1s" repeatCount="indefinite"/>
+          <animate xlink:href=".p3" attributeName="opacity" values="0.9;0" dur="3.2s" begin="1s" repeatCount="indefinite"/>
+          <text x="140" y="265" text-anchor="middle" font-size="30">👃</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 3 -->
+  <section class="slide" id="slide-3">
+    <div class="slide-inner compare-wrap">
+      <h2 class="headline">Smell roses? Fragrant.<br>Smell trashcans? EUGH!</h2>
+      <p class="body-copy" style="margin:0 auto;">Not every scent gets the same reaction. Click each card to see how noses respond:</p>
+      <div class="compare-cards">
+        <div class="smell-card rose" id="roseCard">
+          <span class="icon">🌹</span>
+          <h3>A blooming rose</h3>
+          <p class="hint">click to sniff</p>
+          <div class="reaction fragrant" id="roseReaction"></div>
+        </div>
+        <div class="smell-card trash" id="trashCard">
+          <span class="icon">🗑️</span>
+          <h3>An old trashcan</h3>
+          <p class="hint">click to sniff</p>
+          <div class="reaction eugh" id="trashReaction"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 4 -->
+  <section class="slide" id="slide-4">
+    <div class="slide-inner tip-box">
+      <span class="tip-icon">💡</span>
+      <h2>So, here's my big tip:</h2>
+      <p>If you're a natural product manufacturer, a good smell will make your product feel better — people trust what smells nice. If not... just enjoy the fragrance!</p>
+      <div class="tip-buttons">
+        <button class="tip-pill" id="makerBtn">I'm a product maker 🧴</button>
+        <button class="tip-pill" id="sniffBtn">I just enjoy fragrance 🌼</button>
+      </div>
+      <div class="tip-reveal" id="tipReveal"></div>
+    </div>
+  </section>
+
+</div>
+
+<button class="arrow-btn" id="prevBtn" aria-label="Previous slide">‹</button>
+<button class="arrow-btn" id="nextBtn" aria-label="Next slide">›</button>
+<div class="slide-counter" id="counter">1 / 4</div>
+<div class="nav-dots" id="dots"></div>
+
+<script>
+(function(){
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dotsWrap = document.getElementById('dots');
+  const counter = document.getElementById('counter');
+  let current = 0;
+
+  slides.forEach((s,i)=>{
+    const d = document.createElement('div');
+    d.className = 'dot' + (i===0?' active':'');
+    d.addEventListener('click',()=>goTo(i));
+    dotsWrap.appendChild(d);
+  });
+  const dots = Array.from(dotsWrap.children);
+
+  function goTo(i){
+    if(i<0) i = slides.length-1;
+    if(i>=slides.length) i = 0;
+    slides[current].classList.remove('active');
+    dots[current].classList.remove('active');
+    current = i;
+    slides[current].classList.add('active');
+    dots[current].classList.add('active');
+    counter.textContent = (current+1)+' / '+slides.length;
+  }
+
+  document.getElementById('prevBtn').addEventListener('click',()=>goTo(current-1));
+  document.getElementById('nextBtn').addEventListener('click',()=>goTo(current+1));
+
+  document.addEventListener('keydown',(e)=>{
+    if(e.key==='ArrowRight') goTo(current+1);
+    if(e.key==='ArrowLeft') goTo(current-1);
+  });
+
+  let touchX = null;
+  document.addEventListener('touchstart', e=>{ touchX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e=>{
+    if(touchX===null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if(dx > 50) goTo(current-1);
+    if(dx < -50) goTo(current+1);
+    touchX = null;
+  });
+
+  // Slide 2: expandable steps
+  document.querySelectorAll('.step').forEach(step=>{
+    step.addEventListener('click',()=>step.classList.toggle('open'));
+  });
+
+  // Slide 3: sniff interactions with floating particles
+  function burstParticles(container, colors){
+    for(let i=0;i<10;i++){
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = 6 + Math.random()*8;
+      p.style.width = size+'px';
+      p.style.height = size+'px';
+      p.style.background = colors[Math.floor(Math.random()*colors.length)];
+      p.style.left = (40 + Math.random()*40) + '%';
+      p.style.top = '30%';
+      container.appendChild(p);
+      const dx = (Math.random()-0.5)*160;
+      const dy = -80 - Math.random()*80;
+      p.animate([
+        {transform:'translate(0,0)', opacity:0.9},
+        {transform:`translate(${dx}px, ${dy}px)`, opacity:0}
+      ],{duration:1200+Math.random()*500, easing:'ease-out'});
+      setTimeout(()=>p.remove(),1800);
+    }
+  }
+
+  const roseCard = document.getElementById('roseCard');
+  const roseReaction = document.getElementById('roseReaction');
+  roseCard.addEventListener('click',()=>{
+    roseReaction.textContent = "Ahh, fragrant! 🌸";
+    burstParticles(roseCard, ['#FFD0E0','#FF9EC2','#FFEAF2']);
+  });
+
+  const trashCard = document.getElementById('trashCard');
+  const trashReaction = document.getElementById('trashReaction');
+  trashCard.addEventListener('click',()=>{
+    trashReaction.textContent = "EUGH, gross! 🤢";
+    burstParticles(trashCard, ['#8C9A6B','#5C6B3F','#B7C79A']);
+  });
+
+  // Slide 4 buttons
+  const tipReveal = document.getElementById('tipReveal');
+  document.getElementById('makerBtn').addEventListener('click',()=>{
+    tipReveal.innerHTML = "Test your product's scent with real people, keep ingredients natural where you can, and remember: a pleasant smell builds trust before anyone even reads the label. 🧴✨";
+    tipReveal.classList.add('show');
+  });
+  document.getElementById('sniffBtn').addEventListener('click',()=>{
+    tipReveal.innerHTML = "Next time you're outside, pause and take a deep breath — try to notice three different smells around you. Nature has a whole invisible language! 🌼🌿";
+    tipReveal.classList.add('show');
+  });
+})();
+</script>
+
+</body>
+</html>
